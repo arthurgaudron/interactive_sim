@@ -1,0 +1,7 @@
+name: simplex-viz
+dependencies:
+  - python=3.5
+  - jupyter
+  - numpy
+  - scipy
+  - matplotlib
