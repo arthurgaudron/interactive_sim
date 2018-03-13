@@ -1,6 +1,6 @@
-name: simplex-viz
+name: VRP_MDVRP interactive simulation
 dependencies:
-  - python=3.5
+  - python=3.6
   - jupyter
   - numpy
   - scipy
