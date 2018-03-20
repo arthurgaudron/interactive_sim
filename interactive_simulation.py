@@ -3,12 +3,14 @@ import matplotlib.pyplot as plt
 import ipywidgets as widgets
 from ipywidgets import interact, interactive, fixed, interact_manual, FloatSlider, IntSlider, Layout
 import numpy as np
+from prettytable import PrettyTable
+
 
 style = {'description_width': 'initial'}
 layout = Layout(width='60%')
 
 def interactive_plot():
-    interactive_plot = interact_manual(f,
+    interactive_plot = interact(f,
                                    fuel_cost=FloatSlider(description='Fuel cost (€/L): ',
                                                          value=1.1,
                                                          min=0.01,
@@ -17,7 +19,7 @@ def interactive_plot():
                                                          style=style, layout=layout),
 
                                    driver_cost_van=FloatSlider(description='VRP - Van driver cost (€/d): ',
-                                                               value=50,
+                                                               value=83,
                                                                min=1,
                                                                max=100,
                                                                step=1,
@@ -25,15 +27,15 @@ def interactive_plot():
                                                                layout=layout),
 
                                    vehicle_cost_van=FloatSlider(description='VRP - Van cost (€/v): ',
-                                                                value=80,
+                                                                value=40,
                                                                 min=1,
                                                                 max=100,
                                                                 step=1,
                                                                 style=style,
                                                                 layout=layout),
 
-                                   fuel_consup_van=FloatSlider(description='VRP - Van FC (L/100km): ',
-                                                               value=9,
+                                   fuel_consup_van=FloatSlider(description='VRP - Van fuel consumption (L/100km): ',
+                                                               value=7,
                                                                min=0,
                                                                max=15,
                                                                step=0.1,
@@ -49,8 +51,8 @@ def interactive_plot():
                                                       style=style,
                                                       layout=layout),
 
-                                   capacity_van=IntSlider(description='VRP - Van capacity: ',
-                                                      value=50,
+                                   capacity_van=IntSlider(description='VRP - Van capacity (#): ',
+                                                      value=80,
                                                       min=5,
                                                       max=100,
                                                       step=5,
@@ -66,7 +68,7 @@ def interactive_plot():
                                                                     layout=layout),
 
                                    speed_van=FloatSlider(description='VRP - Van speed (km/h): ',
-                                                         value=20,
+                                                         value=30,
                                                          min=1,
                                                          max=50,
                                                          style=style,
@@ -74,8 +76,8 @@ def interactive_plot():
 
                                    CC_cost_van=FloatSlider(description='VRP - Van climate change cost (cts€/km): ',
                                                            value = 2.8,
-                                                           min=2.8,
-                                                           max=2.9,
+                                                           min=0.1,
+                                                           max=5,
                                                            style=style,
                                                            layout=layout),
 
@@ -87,7 +89,7 @@ def interactive_plot():
                                                            layout=layout),
 
                                    driver_cost_truck=FloatSlider(description='MDVRP - Truck driver cost (€/d): ',
-                                                      value=60,
+                                                      value=83,
                                                       min=1,
                                                       max=100,
                                                       step=1,
@@ -96,7 +98,7 @@ def interactive_plot():
 
 
                                    vehicle_cost_truck=FloatSlider(description='MDVRP - Truck cost (€/t): ',
-                                                      value=80,
+                                                      value=50,
                                                       min=1,
                                                       max=120,
                                                       step=1,
@@ -104,7 +106,7 @@ def interactive_plot():
                                                       layout=layout),
 
                                    courrier_cost=FloatSlider(description='MDVRP - Courrier cost (€/delivery): ',
-                                                      value=1,
+                                                      value=5,
                                                       min=0.1,
                                                       max=10,
                                                       step=0.1,
@@ -112,18 +114,18 @@ def interactive_plot():
                                                       layout=layout),
 
                                    fuel_consup_truck=FloatSlider(description='MDVRP - Truck fuel consumption (L/100km): ',
-                                                      value=13,
+                                                      value=25,
                                                       min=0,
-                                                      max=15,
+                                                      max=40,
                                                       step=0.1,
                                                       style=style,
                                                       layout=layout),
 
-                                   pm_truck=FloatSlider(description='MDVRP - Truck particle emission (g/km): ',
-                                                      value=1,
+                                   pm_truck=FloatSlider(description='MDVRP - Truck particle emission (g/tkm): ',
+                                                      value=0.308,
                                                       min=0.1,
                                                       max=1,
-                                                      step=0.01,
+                                                      step=0.001,
                                                       style=style,
                                                       layout=layout),
 
@@ -135,49 +137,51 @@ def interactive_plot():
                                                       style=style,
                                                       layout=layout),
 
-                                   dropoff_duration_truck=FloatSlider(description='MDVRP - Truck dropoff duration: ',
-                                                      value=1,
-                                                      min=0,
-                                                      max=15,
-                                                      step=1,
-                                                      style=style,
-                                                      layout=layout),
-
-                                   dropoff_duration_bike=FloatSlider(description='MDVRP - Bike dropoff duration: ',
-                                                      value=1,
-                                                      min=0,
-                                                      max=15,
-                                                      step=1,
-                                                      style=style,
-                                                      layout=layout),
-
-                                   speed_truck=FloatSlider(description='MDVRP - Truck speed: ',
-                                                      value=20,
-                                                      min=0,
-                                                      max=50,
-                                                      step=1,
-                                                      style=style,
-                                                      layout=layout),
-
-                                   speed_bike=FloatSlider(description='MDVRP - Bike speed: ',
+                                   dropoff_duration_truck=FloatSlider(description='MDVRP - Truck dropoff duration (min): ',
                                                       value=15,
+                                                      min=0,
+                                                      max=30,
+                                                      step=1,
+                                                      style=style,
+                                                      layout=layout),
+
+                                   dropoff_duration_bike=FloatSlider(description='MDVRP - Bike dropoff duration (min): ',
+                                                      value=5,
+                                                      min=0,
+                                                      max=15,
+                                                      step=1,
+                                                      style=style,
+                                                      layout=layout),
+
+                                   speed_truck=FloatSlider(description='MDVRP - Truck speed (km/h): ',
+                                                      value=30,
                                                       min=1,
                                                       max=50,
                                                       step=1,
                                                       style=style,
                                                       layout=layout),
 
-                                   CC_cost_truck=FloatSlider(description='MDVRP - Truck climate change cost: ',
-                                                             value=2.8,
-                                                             min=2.8,
+                                   speed_bike=FloatSlider(description='MDVRP - Bike speed (km/h): ',
+                                                      value=20,
+                                                      min=1,
+                                                      max=50,
+                                                      step=1,
+                                                      style=style,
+                                                      layout=layout),
+
+                                   CC_cost_truck=FloatSlider(description='MDVRP - Truck climate change cost (cts€/km): ',
+                                                             value=1.7,
+                                                             min=0,
                                                              max=2.9,
+                                                             step=0.1,
                                                              style=style,
                                                              layout=layout),
 
-                                   PH_cost_truck=FloatSlider(description='MDVRP - Truck public health cost: ',
-                                                                value=3,
-                                                                min=1.1,
+                                   PH_cost_truck=FloatSlider(description='MDVRP - Truck air pollution cost (cts€/km): ',
+                                                                value=2.80,
+                                                                min=0,
                                                                 max=5.9,
+                                                                step=0.1,
                                                                 style=style,
                                                                 layout=layout),
                                 continous_update=False,
@@ -259,25 +263,29 @@ def f(fuel_cost, driver_cost_van, vehicle_cost_van, fuel_consup_van,
 
     total_ph_cost_truck = scenario_mdvrp["Vehicle distance"] * PH_cost_truck / 100
 
-    total_time_mdvrp = (scenario_mdvrp["Vehicle distance"] / 5) * 60 / speed_truck + (
-                scenario_mdvrp["Vehicle distance"] * 60 / speed_bike)
+    total_time_mdvrp_truck = (scenario_mdvrp["Vehicle distance"] / 5) * 60 / speed_truck
 
-    total_dropoff_mdvrp = dropoff_duration_truck + (
-                nb_deliveries /scenario_mdvrp["Nb couriers"] ) * dropoff_duration_bike
+    total_time_mdvrp_bike = scenario_mdvrp["Vehicle distance"] * 60 / speed_bike
+
+    total_dropoff_mdvrp_truck = dropoff_duration_truck
+
+    total_dropoff_mdvrp_bike = nb_deliveries /scenario_mdvrp["Nb couriers"] * dropoff_duration_bike
 
     total_pm_mdvrp = scenario_mdvrp["Vehicle distance"] * pm_truck
-
-    print(str(nb_deliveries /scenario_mdvrp["Nb couriers"]))
 
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(15, 5))
 
     # KPI : COST
 
+
     ax1.bar(0, total_driver_cost_vrp, color="#ef8a62")
-    ax1.bar(0, total_vehicule_cost_vrp, bottom=total_driver_cost_vrp, color="#ca0020")
+    ax1.bar(0, total_vehicule_cost_vrp, bottom=total_driver_cost_vrp, color="#e06377")
     ax1.bar(0, total_fuel_cost_vrp,
             bottom=total_driver_cost_vrp + total_vehicule_cost_vrp,
             color="#0571b0")
+    ax1.bar(0, 0,
+            bottom=total_driver_cost_vrp + total_vehicule_cost_vrp + total_fuel_cost_vrp,
+            color="#a491ba")
     ax1.bar(0, total_cc_cost_van,
             bottom=total_driver_cost_vrp + total_vehicule_cost_vrp + total_fuel_cost_vrp,
             color="green")
@@ -288,13 +296,13 @@ def f(fuel_cost, driver_cost_van, vehicle_cost_van, fuel_consup_van,
     ax1.bar(1, total_driver_cost_mdvrp, color="#ef8a62")
     ax1.bar(1, total_vehicule_cost_mdvrp,
             bottom=total_driver_cost_mdvrp,
-            color="#ca0020")
+            color="#e06377")
     ax1.bar(1, total_fuel_cost_mdvrp,
             bottom=total_driver_cost_mdvrp + total_vehicule_cost_mdvrp,
             color="#0571b0")
     ax1.bar(1, total_courriers_cost_mdvrp,
             bottom=total_driver_cost_mdvrp + total_vehicule_cost_mdvrp + total_fuel_cost_mdvrp,
-            color="#8073ac")
+            color="#a491ba")
     ax1.bar(1, total_cc_cost_truck,
             bottom=total_driver_cost_mdvrp + total_vehicule_cost_mdvrp + total_courriers_cost_mdvrp + total_fuel_cost_mdvrp,
             color="green")
@@ -302,26 +310,45 @@ def f(fuel_cost, driver_cost_van, vehicle_cost_van, fuel_consup_van,
             bottom=total_driver_cost_mdvrp + total_vehicule_cost_mdvrp + total_courriers_cost_mdvrp + total_fuel_cost_mdvrp + total_cc_cost_truck,
             color="black")
 
-    ax1.set_xticklabels(["", "VRP", "", "MDVRP"])
+    ax1.set_xticklabels(["", "VRP", "", "2EVRP"])
     ax1.set_title("Total cost\n (in €)\n")
-    ax1.legend(('Drivers', 'Vehicles', 'Fuel', 'Climate Change', "Public Health", "Bike"),
+    ax1.legend(('Drivers', 'Vehicles', 'Fuel', "Bike", 'Climate Change', "Public Health"),
                bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
 
     # KPI : TIME
 
     ax2.set_title("Average tour time\n (in min)\n")
-    ax2.set_xticklabels(["", "VRP", "", "MDVRP"])
-    ax2.bar(0, total_time_vrp, color="#ca0020")
-    ax2.bar(0, total_dropoff_vrp, bottom=total_time_vrp, color="#0571b0")
-    ax2.bar(1, total_time_mdvrp, color="#ca0020")
-    ax2.bar(1, total_dropoff_mdvrp, bottom=total_time_mdvrp, color="#0571b0")
-    ax2.legend(("Trip time", "Dropoff time"), bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+    ax2.set_xticklabels(["", "VRP", "", "2EVRP"])
+    ax2.bar(0, total_time_vrp, color="#e06377")
+    ax2.bar(0, total_dropoff_vrp, bottom=total_time_vrp, color="#f7d4da")
+    ax2.bar(0, 0, bottom=total_time_vrp + total_dropoff_vrp, color="#a491ba")
+    ax2.bar(0, 0, bottom=total_time_vrp + total_dropoff_vrp, color="#cbc0d8")
+
+    ax2.bar(1, total_time_mdvrp_truck, color="#e06377")
+    ax2.bar(1, total_dropoff_mdvrp_truck, bottom=total_time_mdvrp_truck, color="#f7d4da")
+    ax2.bar(1, total_time_mdvrp_bike, bottom=total_time_mdvrp_truck + total_dropoff_mdvrp_truck, color="#a491ba")
+    ax2.bar(1, total_dropoff_mdvrp_bike, bottom=total_time_mdvrp_truck + total_time_mdvrp_bike + total_dropoff_mdvrp_truck, color="#cbc0d8")
+
+    ax2.legend(("Truck trip time", "Truck dropoff time", "Bike trip time",  "Bike dropoff time"), bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
 
     # KPI : PM EMISSION
 
     ax3.set_title("Total PM emission\n (in g)\n")
-    ax3.set_xticklabels(["", "VRP", "", "MDVRP"])
-    ax3.bar(0, total_pm_vrp, color="#0571b0")
-    ax3.bar(1, total_pm_mdvrp, color="#8073ac")
+    ax3.set_xticklabels(["", "VRP", "", "2EVRP"])
+    ax3.bar(0, total_pm_vrp, color="#e06377")
+    ax3.bar(1, total_pm_mdvrp, color="#a491ba")
 
     fig.subplots_adjust(wspace=0.95)
+
+    # Table
+
+    results = PrettyTable()
+
+    results.field_names = ["Output", "VRP", "2EVRP"]
+    results.add_row(["Number of drivers", scenario_vrp["Nb of vehicles"].values[0], 1])
+    results.add_row(["Number of courriers", 0, scenario_mdvrp["Nb couriers"].values[0]])
+    results.add_row(["Total distance with vehicles (km)", scenario_vrp["Distance"].values[0],
+                     scenario_mdvrp["Vehicle distance"].values[0]])
+
+
+    print(results)
